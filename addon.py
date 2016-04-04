@@ -11,13 +11,27 @@ addon       = xbmcaddon.Addon()
 addonname   = addon.getAddonInfo('name')
 addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
 sys.path.append(os.path.join( addon_dir, 'resources', 'lib' ) )
+import AddonGithubUpdater
+
+try:
+    updater=AddonGithubUpdater.AddonGithubUpdater("/storage/.kodi/addons","plugin.program.hyperion.screenshot-master","LightberryEu","plugin.program.hyperion.screenshot")
+    if updater.isUpdateAvailable():
+        if xbmcgui.Dialog().yesno(addonname, "Plugin update is available. Do you want to install new version?"):
+            updater.installUpdate()
+            xbmcgui.Dialog().ok(addonname, "Update installed. Please restart plugin")
+            sys.exit()
+except Exception, e:
+    xbmcgui.Dialog().ok(addonname, "Failed to check the update...")
 
 line1 = "Welcome!"
-line2 = "We take a screenshot now :)"
+line2 = "We take a screenshot now :) Hyperion will be killed in order to enable access to the grabber."
 
 xbmcgui.Dialog().ok(addonname, line1, line2)
+
+
 try:
     lsusb_output = subprocess.check_output('lsusb')
+    grabber=""
     if "1b71:3002" in lsusb_output:
         grabber = "utv007"
     elif "05e1:0408" in lsusb_output:
@@ -33,7 +47,8 @@ try:
         sys.exit()
         
     #generating screenshot
-    subprocess.call(["killall", "hyperiond"])
+    if "hyperiond.sh" in subprocess.check_output("ps"):
+        subprocess.call(["killall", "hyperiond"])
     os.chdir("/storage")
     if grabber == "utv007":
         xbmcgui.Dialog().ok(addonname,subprocess.check_output(["/storage/hyperion/bin/hyperion-v4l2.sh","--video-standard","PAL","--screenshot"]))
