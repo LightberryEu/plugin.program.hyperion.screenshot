@@ -14,7 +14,7 @@ sys.path.append(os.path.join( addon_dir, 'resources', 'lib' ) )
 import AddonGithubUpdater
 
 try:
-    updater=AddonGithubUpdater.AddonGithubUpdater("/storage/.kodi/addons","plugin.program.hyperion.screenshot-master","LightberryEu","plugin.program.hyperion.screenshot")
+    updater=AddonGithubUpdater.AddonGithubUpdater(addon_dir, "LightberryEu","plugin.program.hyperion.screenshot")
     if updater.isUpdateAvailable():
         if xbmcgui.Dialog().yesno(addonname, "Plugin update is available. Do you want to install new version?"):
             updater.installUpdate()
@@ -39,21 +39,23 @@ try:
 
     if grabber != "":
         if "video0" in subprocess.check_output(['ls','/dev']):
-            xbmcgui.Dialog().ok(addonname, "Compatible video grabber has been detected. Make sure that the source video standard is PAL")
+            xbmcgui.Dialog().ok(addonname, "Compatible video grabber has been detected")
         else:
             xbmcgui.Dialog().ok(addonname, "Video grabber has been detected but video0 does not exist. Please install drivers or use different disto")
     else:
         xbmcgui.Dialog().ok(addonname, "We have not detected the grabber. Plugin will exit...")
         sys.exit()
-        
-    #generating screenshot
+
+    options = ["PAL", "NTSC"]
+    selected_index = xbmcgui.Dialog().select("Select grabber standard:", options)
+    # generating screenshot
     if "hyperiond.sh" in subprocess.check_output("ps"):
         subprocess.call(["killall", "hyperiond"])
     os.chdir("/storage")
     if grabber == "utv007":
-        xbmcgui.Dialog().ok(addonname,subprocess.check_output(["/storage/hyperion/bin/hyperion-v4l2.sh","--video-standard","PAL","--screenshot"]))
+        xbmcgui.Dialog().ok(addonname,subprocess.check_output(["/storage/hyperion/bin/hyperion-v4l2.sh", "--video-standard", options[selected_index], "--screenshot"]))
     else:
-        xbmcgui.Dialog().ok(addonname,subprocess.check_output(["/storage/hyperion/bin/hyperion-v4l2.sh","--video-standard","PAL","--width","240","--height","192","--screenshot"]))
+        xbmcgui.Dialog().ok(addonname,subprocess.check_output(["/storage/hyperion/bin/hyperion-v4l2.sh", "--video-standard", options[selected_index], "--width", "240", "--height", "192", "--screenshot"]))
     okno = xbmcgui.WindowDialog(xbmcgui.getCurrentWindowId())
     obrazek = xbmcgui.ControlImage(0,0,1280,720,"/storage/screenshot.png")
     okno.addControl(obrazek)

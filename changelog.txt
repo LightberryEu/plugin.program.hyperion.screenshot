@@ -1,2 +1,3 @@
 0.1.0 Initial beta Release
 0.2.0 Auto-update added
+0.2.1 Fixes auto-update, added standard selector
