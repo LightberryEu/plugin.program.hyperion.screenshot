@@ -51,13 +51,26 @@ try:
     # generating screenshot
     if "hyperiond.sh" in subprocess.check_output("ps"):
         subprocess.call(["killall", "hyperiond"])
-    os.chdir("/storage")
-    if grabber == "utv007":
-        xbmcgui.Dialog().ok(addonname,subprocess.check_output(["/storage/hyperion/bin/hyperion-v4l2.sh", "--video-standard", options[selected_index], "--screenshot"]))
+
+    cmd = "/storage/hyperion/bin/hyperion-v4l2.sh"
+    if "osmc" in open("/proc/version").read():
+        cmd = "hyperion-v4l2"
+        os.chdir(os.path.expanduser("~"))
     else:
-        xbmcgui.Dialog().ok(addonname,subprocess.check_output(["/storage/hyperion/bin/hyperion-v4l2.sh", "--video-standard", options[selected_index], "--width", "240", "--height", "192", "--screenshot"]))
+        os.chdir("/storage")
+
+    if grabber == "utv007":
+        xbmcgui.Dialog().ok(addonname,subprocess.check_output([cmd, "--video-standard", options[selected_index], "--screenshot"]))
+    else:
+        xbmcgui.Dialog().ok(addonname,subprocess.check_output([cmd, "--video-standard", options[selected_index], "--width", "240", "--height", "192", "--screenshot"]))
     okno = xbmcgui.WindowDialog(xbmcgui.getCurrentWindowId())
-    obrazek = xbmcgui.ControlImage(0,0,1280,720,"/storage/screenshot.png")
+
+    if "osmc" in open("/proc/version").read():
+        obrazek = xbmcgui.ControlImage(0, 0, 1280, 720, os.path.expanduser("~/screenshot.png"))
+        os.chdir(os.path.expanduser("~"))
+    else:
+        obrazek = xbmcgui.ControlImage(0, 0, 1280, 720, "/storage/screenshot.png")
+
     okno.addControl(obrazek)
     okno.show()
     obrazek.setVisible(True)
