@@ -2,4 +2,5 @@
 0.2.0 Auto-update added
 0.2.1 Fixes auto-update, added standard selector
 0.2.2 OSMC fixes
-0.3.0 Refactor
+1.0.0 Refactor
+1.0.1 bugfixes

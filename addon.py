@@ -1,5 +1,5 @@
 import xbmc
-import os
+import os, sys
 import xbmcaddon
 import xbmcgui
 from resources.lib.Screenshoter import Screenshoter
@@ -22,14 +22,15 @@ except:
 
 try:
     scsh = Screenshoter()
-    scrnshotPath = scsh.takeScreenshot(addon_dir,options[selected_index])
+    scrnshotPath = scsh.takeScreenshot(addon_dir, options[selected_index])
 except Exception, e:
     xbmcgui.Dialog().ok(addonname, e.message)
+    sys.exit()
 
 try:
     window = xbmcgui.WindowDialog()
 
-    scrnshot = xbmcgui.ControlImage(0,0,1280,720,scrnshotPath)
+    scrnshot = xbmcgui.ControlImage(0, 0, 1280, 720, scrnshotPath)
     window.addControl(scrnshot)
     window.show()
     xbmc.sleep(5000)
